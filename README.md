@@ -1,5 +1,5 @@
 # Input Debouncing
-**Debouncing** is a best-practice technique that enhances the user experience of frontend applications and enhances performance.  
+**Debouncing** is a best-practice technique that enhances the user experience of frontend applications and optimizes performance.  
 It is typically used in applications that instantaneously query a database whenever an input field recieves a value.
 
 ## How it works
