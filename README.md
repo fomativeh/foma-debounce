@@ -1,70 +1,50 @@
-# Getting Started with Create React App
+# Input Debouncing
+**Debouncing** is a best-practice technique that enhances the user experience of frontend applications and enhances performance.  
+It is typically used in applications that instantaneously query a database whenever an input field recieves a value.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## How it works
+In applications that list matched records as a user types into an input field(e.g amazon or jumia product search), the database usually gets queried with each keystrike, and this may lead to redundant API calls, ultimately affecting performance and leading to a terrible user experience.  
+```javascript
+  //Queries the dataset without debounce functionality
+  const queryDatasetWithoutDebounce = (query) => {
+    if (query.trim() == "") return;
 
-## Available Scripts
+    //Executes this whenever the user strikes a key 
+    const matchedResults = products.filter((eachName) =>
+      eachName.toLowerCase().includes(query.toLowerCase())
+    );
+    console.log(
+      `Dataset queried. \nResults: ${
+        matchedResults.length > 0 ? matchedResults : "No match."
+      }`
+    );
+  };
+```
+The idea is to **infuse a pause** with each keystrike, and only make queries after a few specified seconds. If typing continues before the pause-time elapses, the timer gets reset. The database is only queried after the pause-time elapses. 
+```javascript
+  //Stores debounce timer id
+  let debounceTimer;
 
-In the project directory, you can run:
+  //Queries the dataset with debounce functionality
+  const queryDatasetWithDebounce = (query) => {
+    //Doesn't execute an empty query
+    if (query.trim() === "") return;
 
-### `npm start`
+    //Resets timer on every key strike
+    clearTimeout(debounceTimer);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+    debounceTimer = setTimeout(() => {
+    //Executes this after pause-time elapses
+      const matchedResults = products.filter((eachName) =>
+        eachName.toLowerCase().includes(query.toLowerCase())
+      );
+      console.log(
+        `Dataset queried. \nResults: ${
+          matchedResults.length > 0 ? matchedResults : "No match."
+        }`
+      );
+    }, 1500);//Pause time is 1.5s
+  };
+```
+This mechanism is known to effectively curb performance bottlenecks caused by redundant resource queries.  
+A lot of libraries are available to achieve this, however i have written this from scratch using the setTimeout() function.
